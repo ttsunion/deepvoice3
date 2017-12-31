@@ -9,7 +9,7 @@ import math
 def get_Ty(duration, sr, hop_length, r):
     '''Calculates number of paddings for reduction'''
     def _roundup(x):
-        return math.ceil(x * .1) * 10
+        return math.ceil(x)
     T = _roundup(duration*sr/hop_length)
     num_paddings = r - (T % r) if T % r != 0 else 0
     T += num_paddings
@@ -49,20 +49,20 @@ class Hyperparams:
     converter_filter_size = 5
     converter_channels = 256 # == v
 
-    sinusoid = False
+    sinusoid = True
     attention_win_size = 3
 
     # data
     data = 'sliced' # or 'nick (internal)'
     max_duration = 10.0 # seconds
-    Tx = 180 # characters. maximum length of text.
+    Tx = 100 # characters. maximum length of text.
     Ty = int(get_Ty(max_duration, sr, hop_length, r)) # Maximum length of sound (frames)
 
     # training scheme
     lr = 0.001
     logdir = "logdir"
     sampledir = 'samples'
-    batch_size = 16
+    batch_size = 4
     max_grad_norm = 100.
     max_grad_val = 5.
     num_iterations = 500000
