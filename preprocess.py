@@ -57,6 +57,15 @@ def get_spectrograms(sound_file):
     mel = mel.T.astype(np.float32)  # (T, n_mels)
     mag = mag.T.astype(np.float32)  # (T, 1+n_fft//2)
 
+    # Padding
+    if mel.shape[0]<= hp.Ty:
+        mel = np.concatenate((mel, np.zeros((hp.Ty - mel.shape[0], mel.shape[1]))), axis = 0)
+        done = np.concatenate((done, np.zeros((hp.Ty - done.shape[0]))), axis = 0)
+        mag = np.concatenate((mag, np.zeros((hp.Ty - mag.shape[0], mag.shape[1]))), axis = 0)
+    else:
+        mel = mel[:hp.Ty, :]
+        done = done[:hp.Ty, :]
+        mag = mag[:hp.Ty, :]
     return mel, done, mag
 
 if __name__ == "__main__":
@@ -71,6 +80,7 @@ if __name__ == "__main__":
     files = os.listdir(wav_folder)
     for f in files:
         mel, done, mag = get_spectrograms(os.path.join(wav_folder, f))  # (n_mels, T), (1+n_fft/2, T) float32
+        #print(mel.shape, done.shape, mag.shape)
         np.save(os.path.join(mel_folder, f.replace(".wav", ".npy")), mel)
         np.save(os.path.join(done_folder, f.replace(".wav", ".npy")), done)
         np.save(os.path.join(mag_folder, f.replace(".wav", ".npy")), mag)
